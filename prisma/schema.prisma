@@ -14,16 +14,28 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
+model SavedRecipe {
     id        Int      @id @default(autoincrement())
-    name      String
+    recipeId      Int
+    title         String
+    thumbnail         String
+    savedAt DateTime @default(now())
+
+    savedBy   User   @relation(fields: [savedById], references: [id])
+    savedById String
+
+    // @@index([name])
+}
+
+model Review {
+    id        Int      @id @default(autoincrement())
+    recipeId      Int
+    rating         Int
+    comment         String
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
 
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
+    reviewedBy   User   @relation(fields: [reviewedById], references: [id])
+    reviewedById String
 }
 
 // Necessary for Next auth
@@ -62,7 +74,10 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    posts         Post[]
+
+    savedRecipes  SavedRecipe[]
+    reviews       Review[]
+
 }
 
 model VerificationToken {

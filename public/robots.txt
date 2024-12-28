@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+Disallow: /profile
+Allow: /
+Sitemap: https://yummy-hub-mocha.vercel.app/sitemap.xml
