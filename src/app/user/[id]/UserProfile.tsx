@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { UserPlus, Users } from "lucide-react";
-import { api, RouterOutputs } from "@/trpc/react";
-import { User } from "next-auth";
+import { api, type RouterOutputs } from "@/trpc/react";
+import { type User } from "next-auth";
 
 export function UserProfile({
   data,

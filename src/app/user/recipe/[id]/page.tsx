@@ -43,7 +43,7 @@ export default async function UserRecipePage({
     }));
 
   // Fetch related recipes based on the first tag of the recipe
-  let relatedRecipes: any[] = [];
+  const relatedRecipes: any[] = [];
   //   if (recipe.tags && recipe.tags.length > 0) {
   //     const firstTag = recipe.tags[0].name; // Use the first tag name
   //     relatedRecipes = await fetchRecipes(firstTag, "", 0, 6); // Fetch up to 6 related recipes

@@ -1,7 +1,7 @@
 "use client";
 
 import { RecipeCard } from "@/app/_components/RecipeCard";
-import { RouterOutputs } from "@/trpc/react";
+import { type RouterOutputs } from "@/trpc/react";
 import { fetchRecipes } from "@/utils/tasty-api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
