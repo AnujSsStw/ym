@@ -44,6 +44,7 @@ export function RecipeDetailsClient({
         thumbnail: recipe.thumbnail_url,
         title: recipe.name,
       });
+      setIsSaved((prev) => !prev);
     } catch (error) {
       console.error("Error saving or removing recipe:", error);
       alert("An error occurred while saving or removing the recipe.");
