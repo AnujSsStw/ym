@@ -1,4 +1,4 @@
-import { api, RouterOutputs } from "@/trpc/react";
+import { api, type RouterOutputs } from "@/trpc/react";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { useState } from "react";
 

@@ -16,10 +16,10 @@ datasource db {
 
 model SavedRecipe {
     id        Int      @id @default(autoincrement())
-    recipeId      Int
-    title         String
-    thumbnail         String
-    savedAt DateTime @default(now())
+    recipeId  Int
+    title     String
+    thumbnail String
+    savedAt   DateTime @default(now())
 
     savedBy   User   @relation(fields: [savedById], references: [id])
     savedById String
@@ -29,13 +29,48 @@ model SavedRecipe {
 
 model Review {
     id        Int      @id @default(autoincrement())
-    recipeId      Int
-    rating         Int
-    comment         String
+    recipeId  Int
+    rating    Int
+    comment   String
     createdAt DateTime @default(now())
 
     reviewedBy   User   @relation(fields: [reviewedById], references: [id])
     reviewedById String
+}
+
+model UserCreateRecipe {
+    id                Int      @id @default(autoincrement())
+    name              String   @default("Untitled Recipe")
+    thumbnail         String
+    description       String
+    ingredients       String
+    instructions      String
+    cook_time_minutes Int      @default(0)
+    prep_time_minutes Int      @default(0)
+    servings          Int      @default(1)
+    num_servings      Int      @default(1)
+    // tags         String
+    createdAt         DateTime @default(now())
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+}
+
+model Follows {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    // The user who is following
+    followerId String
+    follower   User   @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+
+    // The user being followed
+    followingId String
+    following   User   @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+    @@unique([followerId, followingId])
+    @@index([followerId])
+    @@index([followingId])
 }
 
 // Necessary for Next auth
@@ -75,9 +110,12 @@ model User {
     accounts      Account[]
     sessions      Session[]
 
-    savedRecipes  SavedRecipe[]
-    reviews       Review[]
+    savedRecipes     SavedRecipe[]
+    reviews          Review[]
+    UserCreateRecipe UserCreateRecipe[]
 
+    followers Follows[] @relation("following")
+    following Follows[] @relation("follower")
 }
 
 model VerificationToken {

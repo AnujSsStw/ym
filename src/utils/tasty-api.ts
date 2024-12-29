@@ -3,10 +3,10 @@ const API_HOST = process.env.NEXT_PUBLIC_TASTY_API_HOST!;
 const BASE_URL = "https://tasty.p.rapidapi.com";
 
 export const fetchRecipes = async (
-  tag: string = "",
-  query: string = "",
-  from: number = 0,
-  size: number = 20
+  tag = "",
+  query = "",
+  from = 0,
+  size = 20
 ) => {
   try {
     const url = new URL(`${BASE_URL}/recipes/list`);
@@ -46,8 +46,8 @@ export const fetchRecipeDetails = async (id: string) => {
     const url = `${BASE_URL}/recipes/get-more-info?id=${id}`;
     const res = await fetch(url, {
       headers: {
-        "x-rapidapi-key": API_KEY!,
-        "x-rapidapi-host": API_HOST!,
+        "x-rapidapi-key": API_KEY,
+        "x-rapidapi-host": API_HOST,
       },
       // cache: "force-cache",
     });

@@ -14,6 +14,7 @@ export function RecipeCard({
   servings,
   removeFromList,
   isLiked,
+  isUserCreated = false,
 }: {
   id: number;
   title: string;
@@ -22,6 +23,7 @@ export function RecipeCard({
   servings?: number;
   removeFromList?: (id: number) => void;
   isLiked?: boolean;
+  isUserCreated?: boolean;
 }) {
   const [liked, setLiked] = useState(isLiked);
 
@@ -30,7 +32,9 @@ export function RecipeCard({
     () => slugify(title, { lower: true, strict: true }),
     [title],
   );
-  const recipeUrl = `/recipes/${slug}-${id}`;
+  const recipeUrl = !isUserCreated
+    ? `/recipes/${slug}-${id}`
+    : `/user/recipe/${id}`;
   const utils = api.useUtils();
   const likeOrDislikeRecipe = api.post.likeOrDislikeRecipe.useMutation({
     onSuccess: async () => {

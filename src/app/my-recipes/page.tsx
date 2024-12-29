@@ -1,12 +1,21 @@
 import { fetchTags } from "@/utils/tasty-api";
 import Link from "next/link"; // Added Link for navigation
-import { Key } from "react";
+import { type Key } from "react";
 import { MyRecipes } from "./Myrecipes";
 import { auth } from "@/server/auth";
 import { api } from "@/trpc/server";
 
 export default async function MyRecipesPage() {
   const session = await auth();
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
   const tags = await fetchTags();
   const categories = tags.results
     .filter(
@@ -26,6 +35,7 @@ export default async function MyRecipesPage() {
     };
   }
   const user_saved_recipes = await api.post.getSavedRecipes();
+  const user_created_recipes = await api.post.getUserCreatedRecipes();
 
   return (
     <div className="flex">
@@ -58,7 +68,10 @@ export default async function MyRecipesPage() {
       </aside>
 
       {/* Main Content */}
-      <MyRecipes UserRecipes={user_saved_recipes} />
+      <MyRecipes
+        UserRecipes={user_saved_recipes}
+        userCreatedR={user_created_recipes}
+      />
     </div>
   );
 }

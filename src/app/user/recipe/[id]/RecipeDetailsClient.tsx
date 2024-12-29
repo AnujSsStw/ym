@@ -1,13 +1,13 @@
 "use client";
 
+import { RecipeReviewCard } from "@/app/_components/ReccipeReview";
+import { RecipeCard } from "@/app/_components/RecipeCard";
 import { api, type RouterOutputs } from "@/trpc/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { type Key, useCallback, useState } from "react";
 import slugify from "slugify";
-import { RecipeReviewCard } from "./ReccipeReview";
-import { RecipeCard } from "./RecipeCard"; // Import RecipeCard component
 
 export function RecipeDetailsClient({
   recipe,
@@ -17,7 +17,7 @@ export function RecipeDetailsClient({
   user,
   reviews,
 }: {
-  recipe: any;
+  recipe: RouterOutputs["post"]["getRecipeById"];
   categories: any[];
   relatedRecipes?: any[];
   isUserSaved?: boolean;
@@ -26,6 +26,21 @@ export function RecipeDetailsClient({
 }) {
   const [isSaved, setIsSaved] = useState(isUserSaved);
   const handleL = api.post.likeOrDislikeRecipe.useMutation();
+  if (!recipe) {
+    return (
+      <div className="p-6 text-center">
+        <h1 className="mb-4 text-4xl font-bold text-red-500">
+          Recipe Not Found
+        </h1>
+        <Link
+          href="/"
+          className="text-primary hover:text-secondary underline transition"
+        >
+          Back to Home
+        </Link>
+      </div>
+    );
+  }
 
   // Generate a slug for the recipe
   const recipeSlug = slugify(recipe.name, { lower: true, strict: true });
@@ -41,9 +56,13 @@ export function RecipeDetailsClient({
     try {
       await handleL.mutateAsync({
         recipeId: recipe.id,
-        thumbnail: recipe.thumbnail_url,
+        thumbnail: recipe.thumbnail,
         title: recipe.name,
       });
+      setIsSaved((prev) => !prev);
+      console.log(
+        isSaved ? "Recipe removed from saved recipes." : "Recipe saved!",
+      );
     } catch (error) {
       console.error("Error saving or removing recipe:", error);
       alert("An error occurred while saving or removing the recipe.");
@@ -55,15 +74,15 @@ export function RecipeDetailsClient({
     "@context": "https://schema.org",
     "@type": "Recipe",
     name: recipe.name,
-    image: recipe.thumbnail_url,
+    image: recipe.thumbnail,
     description: recipe.description || "A delicious recipe to try out.",
-    recipeIngredient: recipe.sections?.flatMap(
-      (section: { components: any[] }) =>
-        section.components.map((item: { raw_text: any }) => item.raw_text),
-    ),
-    recipeInstructions: recipe.instructions?.map(
-      (step: { display_text: any }) => step.display_text,
-    ),
+    // recipeIngredient: recipe.sections?.flatMap(
+    //   (section: { components: any[] }) =>
+    //     section.components.map((item: { raw_text: any }) => item.raw_text),
+    // ),
+    // recipeInstructions: recipe.instructions?.map(
+    //   (step: { display_text: any }) => step.display_text,
+    // ),
     cookTime: `PT${recipe.cook_time_minutes || 0}M`,
     prepTime: `PT${recipe.prep_time_minutes || 0}M`,
     recipeYield: `${recipe.num_servings || 1} serving(s)`,
@@ -135,6 +154,15 @@ export function RecipeDetailsClient({
               <h1 className="text-secondary text-4xl font-bold">
                 {recipe.name}
               </h1>
+              <span>
+                by{" "}
+                <Link href={`/user/${recipe.createdBy.id}`}>
+                  <span className="cursor-pointer text-orange-500 underline transition hover:text-orange-700">
+                    {recipe.createdBy.name || "Anonymous"}
+                  </span>
+                </Link>{" "}
+                on {new Date(recipe.createdAt).toLocaleDateString()}
+              </span>
               {
                 // display rating
                 reviews && reviews.length > 0 ? (
@@ -200,10 +228,10 @@ export function RecipeDetailsClient({
           </div>
 
           {/* Recipe Image */}
-          {recipe.thumbnail_url && (
+          {recipe.thumbnail && (
             <div className="relative mb-6 h-96 w-full">
               <Image
-                src={recipe.thumbnail_url}
+                src={recipe.thumbnail}
                 alt={recipe.name}
                 fill
                 style={{ objectFit: "cover" }}
@@ -264,25 +292,20 @@ export function RecipeDetailsClient({
             </div>
 
             {/* Ingredients */}
-            {recipe.sections && (
+            {
               <div>
                 <h2 className="text-primary mb-3 text-2xl font-bold">
                   Ingredients
                 </h2>
                 <ul className="list-inside list-disc space-y-2 text-gray-700">
-                  {recipe.sections[0]?.components.map(
-                    (
-                      item: { raw_text: any },
-                      index: Key | null | undefined,
-                    ) => (
-                      <li key={index}>
-                        {item.raw_text || "No ingredient details available"}
-                      </li>
-                    ),
-                  )}
+                  {recipe.ingredients.split("\n").map((item, index) => (
+                    <li key={index}>
+                      {item || "No ingredient details available"}
+                    </li>
+                  ))}
                 </ul>
               </div>
-            )}
+            }
           </div>
 
           {/* Instructions */}
@@ -292,11 +315,9 @@ export function RecipeDetailsClient({
                 Instructions
               </h2>
               <ol className="list-inside list-decimal space-y-2 text-gray-700">
-                {(recipe.instructions as any[]).map(
-                  (step: { display_text: string }, index) => (
-                    <li key={index}>{step.display_text}</li>
-                  ),
-                )}
+                {recipe.instructions.split("\n").map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
               </ol>
             </div>
           )}

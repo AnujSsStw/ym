@@ -1,6 +1,7 @@
 "use client";
 
 import { RecipeCard } from "@/app/_components/RecipeCard";
+import { RouterOutputs } from "@/trpc/react";
 import { fetchRecipes } from "@/utils/tasty-api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,9 +10,18 @@ import React, { Suspense, useRef, useState } from "react";
 const RecipeSection = React.memo(function RecipeSection({
   title,
   recipes,
+  isUserCreated = false,
 }: {
   title: string;
-  recipes: any[];
+  recipes: {
+    id: any;
+    name: string;
+    thumbnail_url: any;
+    cook_time_minutes: number;
+    num_servings: number;
+    liked: boolean;
+  }[];
+  isUserCreated?: boolean;
 }) {
   if (!recipes || recipes.length === 0) return null;
 
@@ -32,6 +42,7 @@ const RecipeSection = React.memo(function RecipeSection({
                 cookTime={recipe.cook_time_minutes}
                 servings={recipe.num_servings}
                 isLiked={recipe.liked}
+                isUserCreated={isUserCreated}
               />
             </Suspense>
           );
@@ -46,17 +57,18 @@ export default function HomeClient({
   trending,
   otherSections,
   categories,
+  userRecipes,
 }: {
   popular: any[];
   trending: any[];
   otherSections: any[];
   categories?: { name: string; displayName: string }[];
+  userRecipes: RouterOutputs["post"]["getAllUserRecipes"];
 }) {
   // const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  const [otherSectionsState, setOtherSectionsState] = useState(otherSections);
 
   const dropdownRef = useRef(null);
   const router = useRouter();
@@ -195,7 +207,12 @@ export default function HomeClient({
         <Suspense fallback={<div>Loading...</div>}>
           <RecipeSection title="Popular Recipes This Week" recipes={popular} />
           <RecipeSection title="Trending Recipes" recipes={trending} />
-          {otherSectionsState.map((section, index) =>
+          <RecipeSection
+            title="User Recipes"
+            recipes={userRecipes}
+            isUserCreated
+          />
+          {otherSections.map((section, index) =>
             section.items.filter(
               (item: { thumbnail_url: any }) => item.thumbnail_url,
             ).length > 0 ? (

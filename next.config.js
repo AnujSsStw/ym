@@ -18,6 +18,12 @@ const config = {
         port: "",
         pathname: "/**",
       },
+      {
+        hostname: "utfs.io",
+      },
+      {
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
   },
 };

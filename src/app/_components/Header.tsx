@@ -4,7 +4,7 @@ import { fetchTags } from "@/utils/tasty-api";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { createElement, HTMLAttributes, useEffect, useState } from "react";
+import { createElement, type HTMLAttributes, useEffect, useState } from "react";
 
 export function Header() {
   const { data: session, status } = useSession();

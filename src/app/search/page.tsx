@@ -2,7 +2,7 @@ import { RecipeCard } from "@/app/_components/RecipeCard";
 import { api } from "@/trpc/server";
 import { fetchRecipes, fetchTags } from "@/utils/tasty-api"; // Import API methods
 import Link from "next/link";
-import { Key } from "react";
+import { type Key } from "react";
 
 export default async function SearchPage({
   searchParams,
