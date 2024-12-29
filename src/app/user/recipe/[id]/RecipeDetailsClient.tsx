@@ -48,7 +48,7 @@ export function RecipeDetailsClient({
 
   // Toggle save/unsave functionality
   const toggleSave = useCallback(async () => {
-    if (!user.id) {
+    if (!user) {
       alert("Please log in to save recipes!");
       return;
     }

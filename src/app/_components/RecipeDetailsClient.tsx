@@ -33,7 +33,7 @@ export function RecipeDetailsClient({
 
   // Toggle save/unsave functionality
   const toggleSave = useCallback(async () => {
-    if (!user.id) {
+    if (!user) {
       alert("Please log in to save recipes!");
       return;
     }
@@ -106,13 +106,13 @@ export function RecipeDetailsClient({
       <div className="flex">
         {/* Sidebar */}
         <aside className="hidden min-h-screen w-1/4 bg-gray-100 p-6 lg:block">
-          <h2 className="text-secondary mb-4 text-2xl font-bold">Categories</h2>
+          <h2 className="mb-4 text-2xl font-bold text-secondary">Categories</h2>
           <ul className="space-y-3">
             {categories.map((category) => (
               <li key={category.name}>
                 <Link
                   href={`/categories/${category.name}`}
-                  className="hover:text-primary block text-gray-700 transition"
+                  className="block text-gray-700 transition hover:text-primary"
                 >
                   {category.displayName}
                 </Link>
@@ -122,7 +122,7 @@ export function RecipeDetailsClient({
           <div className="mt-8">
             <Link
               href="/"
-              className="text-primary hover:text-secondary font-semibold underline"
+              className="font-semibold text-primary underline hover:text-secondary"
             >
               Back to Home
             </Link>
@@ -133,7 +133,7 @@ export function RecipeDetailsClient({
         <main className="flex-1 p-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h1 className="text-secondary text-4xl font-bold">
+              <h1 className="text-4xl font-bold text-secondary">
                 {recipe.name}
               </h1>
               {
@@ -184,7 +184,7 @@ export function RecipeDetailsClient({
               onClick={toggleSave}
               className={`rounded-full p-2 shadow transition ${
                 isSaved ? "bg-red-600 text-white" : "bg-white text-gray-700"
-              } hover:bg-primary group`}
+              } group hover:bg-primary`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +224,7 @@ export function RecipeDetailsClient({
                 href="https://mysupermarketcompare.co.uk"
                 target="_blank"
                 rel="dofollow"
-                className="text-primary hover:text-secondary font-semibold underline transition"
+                className="font-semibold text-primary underline transition hover:text-secondary"
               >
                 MySupermarket Compare
               </a>
@@ -234,7 +234,7 @@ export function RecipeDetailsClient({
           {/* Recipe Details */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <h2 className="text-primary mb-3 text-2xl font-bold">Details</h2>
+              <h2 className="mb-3 text-2xl font-bold text-primary">Details</h2>
               <ul className="space-y-2 text-gray-700">
                 {recipe.cook_time_minutes && (
                   <li className="flex items-center space-x-2">
@@ -267,7 +267,7 @@ export function RecipeDetailsClient({
             {/* Ingredients */}
             {recipe.sections && (
               <div>
-                <h2 className="text-primary mb-3 text-2xl font-bold">
+                <h2 className="mb-3 text-2xl font-bold text-primary">
                   Ingredients
                 </h2>
                 <ul className="list-inside list-disc space-y-2 text-gray-700">
@@ -289,7 +289,7 @@ export function RecipeDetailsClient({
           {/* Instructions */}
           {recipe.instructions && (
             <div className="mt-6">
-              <h2 className="text-primary mb-3 text-2xl font-bold">
+              <h2 className="mb-3 text-2xl font-bold text-primary">
                 Instructions
               </h2>
               <ol className="list-inside list-decimal space-y-2 text-gray-700">
@@ -306,7 +306,7 @@ export function RecipeDetailsClient({
 
           {/* Related Recipes */}
           <section className="mt-8">
-            <h2 className="text-secondary mb-4 text-2xl font-bold">
+            <h2 className="mb-4 text-2xl font-bold text-secondary">
               You Might Also Like
             </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
