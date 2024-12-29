@@ -12,7 +12,6 @@ export default async function UserRecipePage({
   const recipe = await api.post.getRecipeById({
     id: parseInt(id),
   });
-  console.log(recipe);
 
   if (!recipe) {
     return (
@@ -22,7 +21,7 @@ export default async function UserRecipePage({
         </h1>
         <Link
           href="/"
-          className="text-primary hover:text-secondary underline transition"
+          className="text-primary underline transition hover:text-secondary"
         >
           Back to Home
         </Link>
@@ -52,11 +51,13 @@ export default async function UserRecipePage({
   const reviews = await api.post.getReviews({
     recipe_id: recipe.id,
   });
-  const isUserSaved = await api.post.isUserLikedRecipe({
-    recipeId: recipe.id,
-  });
-
+  let isUserSaved = false;
   const session = await auth();
+  if (session?.user) {
+    isUserSaved = await api.post.isUserLikedRecipe({
+      recipeId: recipe.id,
+    });
+  }
 
   return (
     <RecipeDetailsClient

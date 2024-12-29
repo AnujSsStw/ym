@@ -2,6 +2,8 @@ import { fetchRecipes, fetchTags } from "@/utils/tasty-api";
 import Link from "next/link";
 import { Category } from "./Categories";
 import { api } from "@/trpc/server";
+import { auth } from "@/server/auth";
+import { RouterOutputs } from "@/trpc/react";
 
 const PAGE_SIZE = 20; // Number of recipes per API call
 export default async function CategoryPage({
@@ -22,7 +24,12 @@ export default async function CategoryPage({
     )
     .map((tag: { name: any }) => tag.name);
 
-  const userSavedRecipes = await api.post.getSavedRecipes();
+  let userSavedRecipes: RouterOutputs["post"]["getSavedRecipes"] = [];
+  const session = await auth();
+
+  if (session) {
+    userSavedRecipes = await api.post.getSavedRecipes();
+  }
 
   const recipesWithLikes = recipes.map((recipe: any) => {
     return {
@@ -41,7 +48,7 @@ export default async function CategoryPage({
             <li>
               <Link
                 href={`/`}
-                className="text-primary hover:bg-primary w-full rounded-lg px-4 py-2 text-left transition hover:text-white"
+                className="w-full rounded-lg px-4 py-2 text-left text-primary transition hover:bg-primary hover:text-white"
               >
                 Home
               </Link>
@@ -50,7 +57,7 @@ export default async function CategoryPage({
               <li key={cat}>
                 <Link
                   href={`/categories/${cat}`}
-                  className={`hover:bg-primary w-full rounded-lg px-4 py-2 text-left transition hover:text-white ${
+                  className={`w-full rounded-lg px-4 py-2 text-left transition hover:bg-primary hover:text-white ${
                     cat === category ? "bg-primary text-white" : "text-gray-700"
                   }`}
                 >

@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -41,12 +42,17 @@ export function RecipeCard({
       await utils.post.getAllRecipesWithLikes.invalidate();
     },
   });
+  const session = useSession();
 
   // Handle Like (Save/Unsave Recipe)
   const handleLike = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     try {
+      if (!session.data) {
+        alert("You must be logged in to save recipes.");
+        return;
+      }
       await likeOrDislikeRecipe.mutateAsync({
         recipeId: id,
         thumbnail,
@@ -96,7 +102,7 @@ export function RecipeCard({
             aria-label="Like"
             className={`rounded-full p-2 shadow transition ${
               liked ? "bg-red-600 text-white" : "bg-white text-gray-700"
-            } hover:bg-primary group`}
+            } group hover:bg-primary`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +122,7 @@ export function RecipeCard({
           <button
             onClick={handleShare}
             aria-label="Share"
-            className="hover:bg-primary group rounded-full bg-white p-2 shadow transition"
+            className="group rounded-full bg-white p-2 shadow transition hover:bg-primary"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +157,7 @@ export function RecipeCard({
 
         {/* Content */}
         <div className="flex flex-1 flex-col justify-between p-4">
-          <h3 className="text-secondary mb-2 line-clamp-2 text-lg font-bold">
+          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-secondary">
             {title || "No Title"}
           </h3>
 

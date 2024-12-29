@@ -1,11 +1,17 @@
 "use client";
 
-import { RecipeCard } from "@/app/_components/RecipeCard";
+// import { RecipeCard } from "@/app/_components/RecipeCard";
 import { type RouterOutputs } from "@/trpc/react";
 import { fetchRecipes } from "@/utils/tasty-api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { Suspense, useRef, useState } from "react";
+import React, { lazy, Suspense, useRef, useState } from "react";
+
+const RecipeCard = lazy(() =>
+  import("@/app/_components/RecipeCard").then((module) => ({
+    default: module.RecipeCard,
+  })),
+);
 
 const RecipeSection = React.memo(function RecipeSection({
   title,
@@ -27,7 +33,7 @@ const RecipeSection = React.memo(function RecipeSection({
 
   return (
     <div className="mb-10">
-      <h2 className="text-secondary mb-6 text-3xl font-bold">{title}</h2>
+      <h2 className="mb-6 text-3xl font-bold text-secondary">{title}</h2>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
         {recipes.map((recipe) => {
           return (
@@ -117,7 +123,7 @@ export default function HomeClient({
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search by recipe or ingredients"
-              className="focus:ring-primary w-full rounded-l-lg border p-3 focus:outline-none focus:ring-2"
+              className="w-full rounded-l-lg border p-3 focus:outline-none focus:ring-2 focus:ring-primary"
               onKeyPress={(e) => e.key === "Enter" && handleSearchSubmit()}
             />
             {suggestions.length > 0 && (
@@ -160,7 +166,7 @@ export default function HomeClient({
           </div>
           <button
             onClick={handleSearchSubmit}
-            className="bg-primary rounded-r-lg px-6 text-white transition hover:bg-opacity-90"
+            className="rounded-r-lg bg-primary px-6 text-white transition hover:bg-opacity-90"
           >
             Search
           </button>
@@ -176,7 +182,7 @@ export default function HomeClient({
             <Link
               key={category.name}
               href={`/categories/${category.name}`}
-              className="hover:bg-primary rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:text-white"
+              className="rounded-full bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-primary hover:text-white"
             >
               {category.displayName.toUpperCase()}
             </Link>
@@ -193,7 +199,7 @@ export default function HomeClient({
           Compare prices and discover the best supermarket deals at{" "}
           <a
             href="https://mysupermarketcompare.co.uk/"
-            className="text-primary hover:text-secondary font-semibold underline transition"
+            className="font-semibold text-primary underline transition hover:text-secondary"
             target="_blank"
             rel="dofollow"
           >

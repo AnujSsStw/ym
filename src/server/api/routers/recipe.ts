@@ -28,8 +28,6 @@ export const recipeRouter = createTRPCRouter({
       userLikes = await getUserLikes(ctx.session.user.id, ctx.db);
     }
 
-    const userRecipes = await ctx.db.userCreateRecipe.findMany();
-
     const updatedOtherSections = otherSections.map(
       (section: { items: any[] }) => {
         return {
@@ -156,6 +154,9 @@ export const recipeRouter = createTRPCRouter({
         ingredients: z.string(),
         instructions: z.string(),
         image: z.string(),
+        cook_time_minutes: z.number().optional(),
+        num_servings: z.number().optional(),
+        prep_time_minutes: z.number().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -167,6 +168,9 @@ export const recipeRouter = createTRPCRouter({
           instructions: input.instructions,
           thumbnail: input.image,
           createdBy: { connect: { id: ctx.session.user.id } },
+          cook_time_minutes: input.cook_time_minutes ?? 0,
+          num_servings: input.num_servings ?? 0,
+          prep_time_minutes: input.prep_time_minutes ?? 0,
         },
       });
     }),

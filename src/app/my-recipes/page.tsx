@@ -41,14 +41,14 @@ export default async function MyRecipesPage() {
     <div className="flex">
       {/* Sidebar */}
       <aside className="hidden min-h-screen w-1/4 bg-gray-100 p-6 lg:block">
-        <h2 className="text-secondary mb-4 text-2xl font-bold">Categories</h2>
+        <h2 className="mb-4 text-2xl font-bold text-secondary">Categories</h2>
         <ul className="space-y-3">
           {categories.map(
             (category: { name: Key | null | undefined; displayName: any }) => (
               <li key={category.name}>
                 <Link
                   href={`/categories/${category.name}`}
-                  className="hover:text-primary block text-gray-700 transition"
+                  className="block text-gray-700 transition hover:text-primary"
                 >
                   {category.displayName}
                 </Link>
@@ -60,7 +60,7 @@ export default async function MyRecipesPage() {
         <div className="mt-8">
           <Link
             href="/"
-            className="text-primary hover:text-secondary font-semibold underline transition"
+            className="font-semibold text-primary underline transition hover:text-secondary"
           >
             Back to Home
           </Link>

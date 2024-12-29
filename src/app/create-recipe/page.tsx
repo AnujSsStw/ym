@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { UploadButton, UploadDropzone } from "../_components/uploadthing";
 import { api } from "@/trpc/react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { UploadDropzone } from "../_components/uploadthing";
 
 export default function UserRecipeForm() {
   const [title, setTitle] = useState("");
@@ -12,9 +12,15 @@ export default function UserRecipeForm() {
   const [ingredients, setIngredients] = useState("");
   const [instructions, setInstructions] = useState("");
   const [image, setImage] = useState("");
+  const [cookTime, setCookTime] = useState(0);
+  const [prepTime, setPrepTime] = useState(0);
+  const [servings, setServings] = useState(0);
+
   const router = useRouter();
+  const utils = api.useUtils();
   const submitUserRecipe = api.post.createUserRecipe.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await utils.post.getUserCreatedRecipes.invalidate();
       router.push("/my-recipes");
     },
   });
@@ -32,12 +38,18 @@ export default function UserRecipeForm() {
         ingredients,
         instructions,
         image,
+        cook_time_minutes: cookTime,
+        prep_time_minutes: prepTime,
+        num_servings: servings,
       });
       setTitle("");
       setDescription("");
       setIngredients("");
       setInstructions("");
       setImage("");
+      setCookTime(0);
+      setPrepTime(0);
+      setServings(0);
     }
   };
 
@@ -98,6 +110,50 @@ export default function UserRecipeForm() {
           rows={6}
           required
         />
+      </div>
+      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div>
+          <label htmlFor="cookTime" className="mb-2 block">
+            Cook Time (minutes)
+          </label>
+          <input
+            type="number"
+            id="cookTime"
+            value={cookTime}
+            onChange={(e) => setCookTime(parseInt(e.target.value))}
+            className="w-full rounded border p-2"
+            min="0"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="prepTime" className="mb-2 block">
+            Prep Time (minutes)
+          </label>
+          <input
+            type="number"
+            id="prepTime"
+            value={prepTime}
+            onChange={(e) => setPrepTime(parseInt(e.target.value))}
+            className="w-full rounded border p-2"
+            min="0"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="servings" className="mb-2 block">
+            Number of Servings
+          </label>
+          <input
+            type="number"
+            id="servings"
+            value={servings}
+            onChange={(e) => setServings(parseInt(e.target.value))}
+            className="w-full rounded border p-2"
+            min="1"
+            required
+          />
+        </div>
       </div>
       <div className="mb-4">
         <div className="flex items-center justify-between">
