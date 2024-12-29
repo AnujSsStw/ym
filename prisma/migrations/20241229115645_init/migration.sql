@@ -21,6 +21,33 @@ CREATE TABLE "Review" (
 );
 
 -- CreateTable
+CREATE TABLE "UserCreateRecipe" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL DEFAULT 'Untitled Recipe',
+    "thumbnail" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "ingredients" TEXT NOT NULL,
+    "instructions" TEXT NOT NULL,
+    "cook_time_minutes" INTEGER NOT NULL DEFAULT 0,
+    "prep_time_minutes" INTEGER NOT NULL DEFAULT 0,
+    "servings" INTEGER NOT NULL DEFAULT 1,
+    "num_servings" INTEGER NOT NULL DEFAULT 1,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdById" TEXT NOT NULL,
+    CONSTRAINT "UserCreateRecipe_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Follows" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "followerId" TEXT NOT NULL,
+    "followingId" TEXT NOT NULL,
+    CONSTRAINT "Follows_followerId_fkey" FOREIGN KEY ("followerId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "Follows_followingId_fkey" FOREIGN KEY ("followingId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "Account" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
@@ -62,6 +89,15 @@ CREATE TABLE "VerificationToken" (
     "token" TEXT NOT NULL,
     "expires" DATETIME NOT NULL
 );
+
+-- CreateIndex
+CREATE INDEX "Follows_followerId_idx" ON "Follows"("followerId");
+
+-- CreateIndex
+CREATE INDEX "Follows_followingId_idx" ON "Follows"("followingId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Follows_followerId_followingId_key" ON "Follows"("followerId", "followingId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
